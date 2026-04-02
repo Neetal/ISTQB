@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISTQB Foundation — Certification Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --card: #141e30;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grid */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+    top: -200px; left: -200px;
+    pointer-events: none; z-index: 0;
+    animation: floatGlow 8s ease-in-out infinite;
+  }
+  .glow2 {
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%);
+    bottom: -100px; right: -100px;
+    pointer-events: none; z-index: 0;
+    animation: floatGlow 10s ease-in-out infinite reverse;
+  }
+  @keyframes floatGlow { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,40px)} }
+
+  .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+
+  /* HEADER */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 18px; color: #fff;
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
+  }
+  .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .logo-text p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .stats-bar { display: flex; gap: 16px; }
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .stat-chip span { color: var(--accent); font-family: 'DM Mono', monospace; font-weight: 500; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 12px; padding: 4px; border: 1px solid var(--border); }
+  .tab {
+    flex: 1; padding: 10px; border: none; background: transparent;
+    color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    border-radius: 9px; cursor: pointer; transition: all 0.2s;
+  }
+  .tab.active { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* TOPIC GRID */
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px;
+  }
+  .topic-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .topic-card.selected { border-color: var(--accent); background: rgba(0,212,255,0.08); color: var(--accent); }
+  .topic-icon { font-size: 18px; }
+  .topic-label { font-weight: 500; line-height: 1.3; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    padding: 11px 22px;
+    border: none; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,212,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0,212,255,0.4); }
+  .btn-secondary {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  select {
+    padding: 11px 14px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; outline: none;
+  }
+  select:focus { border-color: var(--accent); }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-meta { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .badge {
+    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .badge-topic { background: rgba(124,58,237,0.2); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .badge-diff { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+  .badge-diff.hard { background: rgba(239,68,68,0.1); color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+  .badge-diff.medium { background: rgba(245,158,11,0.1); color: #fcd34d; border-color: rgba(245,158,11,0.2); }
+  .q-num { color: var(--muted); font-size: 12px; margin-left: auto; font-family: 'DM Mono', monospace; }
+
+  .q-scenario {
+    background: rgba(0,212,255,0.04);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+  .q-scenario strong { color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
+
+  .q-text {
+    font-size: 15px; line-height: 1.7; margin-bottom: 22px;
+    font-weight: 400;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px; line-height: 1.5;
+  }
+  .option:hover:not(.disabled) { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+  .option.selected { border-color: var(--accent); background: rgba(0,212,255,0.1); }
+  .option.correct { border-color: var(--green) !important; background: rgba(16,185,129,0.1) !important; }
+  .option.wrong { border-color: var(--red) !important; background: rgba(239,68,68,0.1) !important; }
+  .option.disabled { cursor: default; }
+  .opt-key {
+    min-width: 26px; height: 26px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--muted); flex-shrink: 0;
+  }
+  .option.correct .opt-key { background: rgba(16,185,129,0.2); border-color: var(--green); color: var(--green); }
+  .option.wrong .opt-key { background: rgba(239,68,68,0.2); border-color: var(--red); color: var(--red); }
+  .option.selected .opt-key { background: rgba(0,212,255,0.2); border-color: var(--accent); color: var(--accent); }
+
+  /* EXPLANATION */
+  .explanation {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    animation: slideIn 0.3s ease;
+  }
+  .explanation h4 {
+    font-family: 'Syne', sans-serif; font-size: 13px; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .explanation p { font-size: 13.5px; line-height: 1.7; color: #94a3b8; }
+  .explanation .syllabus-ref {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace;
+  }
+
+  /* RESULT BANNER */
+  .result-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; border-radius: 11px; margin-bottom: 14px;
+    font-size: 14px; font-weight: 500;
+    animation: slideIn 0.25s ease;
+  }
+  .result-banner.correct-b { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .result-banner.wrong-b { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
+
+  /* SCORE CARD */
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    text-align: center;
+    animation: slideIn 0.4s ease;
+  }
+  .score-ring {
+    width: 140px; height: 140px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .score-text {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transform: none;
+  }
+  .score-pct { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); }
+  .score-label { font-size: 12px; color: var(--muted); }
+  .score-verdict {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .score-meta { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .score-breakdown { display: flex; justify-content: center; gap: 32px; margin-bottom: 28px; }
+  .sb-item { text-align: center; }
+  .sb-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; }
+  .sb-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sb-item.green .sb-num { color: var(--green); }
+  .sb-item.red .sb-num { color: var(--red); }
+
+  /* LOADING */
+  .loading {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 20px; gap: 16px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--muted); font-size: 14px; font-style: italic; }
+  .loading-sub { color: var(--accent); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border-radius: 8px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.4s ease;
+  }
+
+  /* EXAM TIMER */
+  .timer-bar {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 18px; margin-bottom: 20px;
+  }
+  .timer-clock { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--accent); }
+  .timer-label { color: var(--muted); font-size: 13px; }
+  .timer-clock.urgent { color: var(--red); animation: pulse 1s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* QUESTION NAVIGATOR */
+  .q-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .q-dot {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    cursor: pointer; color: var(--muted);
+    transition: all 0.15s;
+  }
+  .q-dot.answered { background: rgba(0,212,255,0.15); border-color: var(--accent); color: var(--accent); }
+  .q-dot.current { border-color: var(--accent2); background: rgba(124,58,237,0.2); color: #a78bfa; }
+  .q-dot:hover { border-color: var(--text); color: var(--text); }
+
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* REVIEW TABLE */
+  .review-list { display: flex; flex-direction: column; gap: 8px; }
+  .review-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 13px;
+  }
+  .review-item .ri-num { color: var(--muted); font-family: 'DM Mono', monospace; min-width: 30px; }
+  .review-item .ri-q { flex: 1; line-height: 1.5; }
+  .review-item .ri-status { font-size: 16px; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    header { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .tabs { flex-wrap: wrap; }
+    .controls { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="glow2"></div>
+
+<div class="app">
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">IQ</div>
+      <div class="logo-text">
+        <h1>ISTQB Foundation Trainer</h1>
+        <p>AI-Powered Certification Prep · CTFL v4.0 Syllabus</p>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-chip">Score <span id="hdr-score">0/0</span></div>
+      <div class="stat-chip">Streak <span id="hdr-streak">0</span>🔥</div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('practice')">Practice Mode</button>
+    <button class="tab" onclick="showTab('mock')">Mock Exam</button>
+    <button class="tab" onclick="showTab('review')">Review Mistakes</button>
+  </div>
+
+  <!-- ===== PRACTICE TAB ===== -->
+  <div id="tab-practice">
+    <div class="section-title">Select Topic</div>
+    <div class="section-sub">Choose a chapter from the ISTQB CTFL v4.0 syllabus to practice</div>
+
+    <div class="topic-grid">
+      <div class="topic-card selected" data-topic="Fundamentals of Testing" onclick="selectTopic(this)">
+        <span class="topic-icon">🎯</span>
+        <span class="topic-label">Ch 1 — Fundamentals of Testing</span>
+      </div>
+      <div class="topic-card" data-topic="Testing Throughout the SDLC" onclick="selectTopic(this)">
+        <span class="topic-icon">🔄</span>
+        <span class="topic-label">Ch 2 — Testing in SDLC</span>
+      </div>
+      <div class="topic-card" data-topic="Static Testing" onclick="selectTopic(this)">
+        <span class="topic-icon">📋</span>
+        <span class="topic-label">Ch 3 — Static Testing</span>
+      </div>
+      <div class="topic-card" data-topic="Test Analysis and Design" onclick="selectTopic(this)">
+        <span class="topic-icon">🧪</span>
+        <span class="topic-label">Ch 4 — Test Analysis & Design</span>
+      </div>
+      <div class="topic-card" data-topic="Managing the Test Activities" onclick="selectTopic(this)">
+        <span class="topic-icon">📊</span>
+        <span class="topic-label">Ch 5 — Managing Test Activities</span>
+      </div>
+      <div class="topic-card" data-topic="Test Tools" onclick="selectTopic(this)">
+        <span class="topic-icon">🛠️</span>
+        <span class="topic-label">Ch 6 — Test Tools</span>
+      </div>
+      <div class="topic-card" data-topic="Mixed Topics" onclick="selectTopic(this)">
+        <span class="topic-icon">🎲</span>
+        <span class="topic-label">Mixed — All Topics</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <select id="difficulty">
+        <option value="mixed">All Difficulties</option>
+        <option value="easy">Easy (K1-K2)</option>
+        <option value="medium">Medium (K2-K3)</option>
+        <option value="hard">Hard (K3 Scenario)</option>
+      </select>
+      <button class="btn btn-primary" onclick="startPractice()">▶ Generate Question</button>
+    </div>
+
+    <div id="practice-area"></div>
+  </div>
+
+  <!-- ===== MOCK EXAM TAB ===== -->
+  <div id="tab-mock" class="hidden">
+    <div id="mock-setup">
+      <div class="section-title">Mock Exam</div>
+      <div class="section-sub">Simulates the real ISTQB CTFL exam — 40 questions, 60 minutes, 65% to pass</div>
+      <div class="q-card" style="margin-top:0">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="font-size:28px;font-weight:700;font-family:'Syne',sans-serif;color:var(--accent)">40</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Questions</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="font-size:28px;font-weight:700;font-family:'Syne',sans-serif;color:var(--yellow)">60</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Minutes</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="font-size:28px;font-weight:700;font-family:'Syne',sans-serif;color:var(--green)">65%</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Pass Mark</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="font-size:28px;font-weight:700;font-family:'Syne',sans-serif;color:var(--accent2)">MCQ</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Question Format</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7">
+          ⚠️ Once started, the timer cannot be paused. The exam will cover all 6 chapters proportionally. You can navigate between questions and change answers before submitting.
+        </div>
+        <div class="controls" style="margin-bottom:0">
+          <select id="mock-count">
+            <option value="10">Quick — 10 Questions</option>
+            <option value="20">Half Mock — 20 Questions</option>
+            <option value="40" selected>Full Mock — 40 Questions</option>
+          </select>
+          <button class="btn btn-primary" onclick="startMockExam()">🚀 Start Mock Exam</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mock-area" class="hidden"></div>
+  </div>
+
+  <!-- ===== REVIEW TAB ===== -->
+  <div id="tab-review" class="hidden">
+    <div class="section-title">Review Mistakes</div>
+    <div class="section-sub">Questions you got wrong this session</div>
+    <div id="review-area">
+      <div style="text-align:center;padding:60px 20px;color:var(--muted)">
+        <div style="font-size:48px;margin-bottom:16px">📭</div>
+        <div style="font-size:16px">No mistakes yet — keep practising!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentTopic = 'Fundamentals of Testing';
+let sessionScore = 0, sessionTotal = 0, streak = 0;
+let wrongQuestions = [];
+let mockQuestions = [], mockAnswers = {}, mockCurrentIdx = 0, mockTimer = null, mockTimeLeft = 0;
+let isMockRunning = false;
+
+// ============================================================
+// TOPIC SELECT
+// ============================================================
+function selectTopic(el) {
+  document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentTopic = el.dataset.topic;
+}
+
+function showTab(t) {
+  ['practice','mock','review'].forEach(x => {
+    document.getElementById('tab-'+x).classList.toggle('hidden', x!==t);
+  });
+  document.querySelectorAll('.tab').forEach((b,i) => {
+    b.classList.toggle('active', ['practice','mock','review'][i]===t);
+  });
+  if (t==='review') renderReview();
+}
+
+// ============================================================
+// API CALL
+// ============================================================
+async function callClaude(prompt, systemPrompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+// ============================================================
+// QUESTION GENERATION
+// ============================================================
+const SYSTEM_PROMPT = `You are an expert ISTQB CTFL v4.0 trainer. Generate realistic exam questions exactly like the real ISTQB Foundation Level certification exam.
+
+Return ONLY a JSON object with this exact structure (no markdown, no explanation):
+{
+  "topic": "topic name",
+  "difficulty": "Easy|Medium|Hard",
+  "kLevel": "K1|K2|K3",
+  "scenario": "A realistic work scenario (2-4 sentences) OR null if not applicable",
+  "question": "The actual question text",
+  "options": {
+    "A": "Option A text",
+    "B": "Option B text",
+    "C": "Option C text",
+    "D": "Option D text"
+  },
+  "correct": "A|B|C|D",
+  "explanation": "Clear 2-3 sentence explanation of why the correct answer is right and key distractors are wrong",
+  "syllabusRef": "CTFL-v4.0 Section X.X.X"
+}
+
+Rules:
+- Base questions on real ISTQB CTFL v4.0 syllabus content
+- For Hard/K3: always include a scenario with real-world testing context
+- Distractors must be plausible, not obviously wrong
+- Cover diverse concepts within the topic
+- Never repeat obvious knowledge — test nuance and application`;
+
+async function generateQuestion(topic, difficulty) {
+  const diffPrompt = difficulty === 'easy' ? 'K1 recall or K2 comprehension, no scenario needed' :
+                     difficulty === 'medium' ? 'K2-K3, may include a brief scenario' :
+                     difficulty === 'hard' ? 'K3 with a detailed realistic workplace scenario requiring analysis' :
+                     'mix of K1-K3 levels, include scenario for K3 questions';
+  
+  return await callClaude(
+    `Generate one ISTQB CTFL v4.0 exam question for topic: "${topic}". Difficulty: ${diffPrompt}.`,
+    SYSTEM_PROMPT
+  );
+}
+
+async function generateBatch(count) {
+  const topics = ['Fundamentals of Testing','Testing Throughout the SDLC','Static Testing','Test Analysis and Design','Managing the Test Activities','Test Tools'];
+  const prompts = [];
+  for(let i=0; i<count; i++){
+    const t = topics[i % topics.length];
+    const d = i % 3 === 2 ? 'hard' : i % 3 === 1 ? 'medium' : 'easy';
+    prompts.push({topic:t, difficulty:d});
+  }
+  return prompts; // we'll generate one at a time in mock
+}
+
+// ============================================================
+// PRACTICE MODE
+// ============================================================
+async function startPractice() {
+  const area = document.getElementById('practice-area');
+  const diff = document.getElementById('difficulty').value;
+  area.innerHTML = `<div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Generating ISTQB question…</div>
+    <div class="loading-sub">🎯 Topic: ${currentTopic}</div>
+  </div>`;
+
+  try {
+    const raw = await generateQuestion(currentTopic, diff);
+    const q = JSON.parse(raw.trim());
+    sessionTotal++;
+    renderPracticeQuestion(q, area);
+  } catch(e) {
+    area.innerHTML = `<div class="q-card" style="color:var(--red)">
+      ⚠️ Error generating question. Please try again. <br><small style="color:var(--muted)">${e.message}</small>
+    </div>`;
+  }
+}
+
+function renderPracticeQuestion(q, container, showNext=true) {
+  let answered = false;
+  const id = 'q_' + Date.now();
+
+  const scenarioHtml = q.scenario ? `<div class="q-scenario">
+    <strong>📋 Scenario</strong>
+    ${q.scenario}
+  </div>` : '';
+
+  const diffClass = q.difficulty === 'Hard' ? 'hard' : q.difficulty === 'Medium' ? 'medium' : '';
+
+  container.innerHTML = `
+    <div class="q-card" id="${id}">
+      <div class="q-meta">
+        <span class="badge badge-topic">${q.topic}</span>
+        <span class="badge badge-diff ${diffClass}">${q.kLevel} · ${q.difficulty}</span>
+        <span class="q-num">Q${sessionTotal}</span>
+      </div>
+      ${scenarioHtml}
+      <div class="q-text">${q.question}</div>
+      <div class="options" id="opts-${id}">
+        ${['A','B','C','D'].map(k=>`
+          <div class="option" id="opt-${id}-${k}" onclick="selectAnswer('${id}','${k}','${q.correct}',${JSON.stringify(q).replace(/'/g,"&#39;").replace(/\\/g,'\\\\')})">
+            <span class="opt-key">${k}</span>
+            <span>${q.options[k]}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div id="feedback-${id}"></div>
+    </div>
+    ${showNext ? `<div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="startPractice()">Skip →</button>
+    </div>` : ''}
+  `;
+}
+
+function selectAnswer(id, chosen, correct, q) {
+  const opts = document.querySelectorAll(`[id^="opt-${id}-"]`);
+  opts.forEach(o => { o.classList.add('disabled'); o.onclick = null; });
+
+  const chosenEl = document.getElementById(`opt-${id}-${chosen}`);
+  const correctEl = document.getElementById(`opt-${id}-${correct}`);
+
+  correctEl.classList.add('correct');
+  const isCorrect = chosen === correct;
+
+  if(!isCorrect) {
+    chosenEl.classList.add('wrong');
+    wrongQuestions.push(q);
+  }
+
+  // Update stats
+  if(isCorrect) { sessionScore++; streak++; }
+  else { streak = 0; }
+  updateStats();
+
+  const fb = document.getElementById(`feedback-${id}`);
+  fb.innerHTML = `
+    <div class="result-banner ${isCorrect?'correct-b':'wrong-b'}">
+      ${isCorrect ? '✅ Correct!' : `❌ Incorrect — Correct answer is <strong>(${correct})</strong>`}
+    </div>
+    <div class="explanation">
+      <h4>💡 Explanation</h4>
+      <p>${q.explanation}</p>
+      <div class="syllabus-ref">📚 ${q.syllabusRef}</div>
+    </div>
+  `;
+
+  // Show Next button
+  const nextBtn = document.querySelector(`#${id}`).parentElement.querySelector('.btn-secondary');
+  if(nextBtn) { nextBtn.textContent = '→ Next Question'; nextBtn.classList.replace('btn-secondary','btn-primary'); }
+}
+
+function updateStats() {
+  document.getElementById('hdr-score').textContent = `${sessionScore}/${sessionTotal}`;
+  document.getElementById('hdr-streak').textContent = streak;
+}
+
+// ============================================================
+// MOCK EXAM
+// ============================================================
+async function startMockExam() {
+  const count = parseInt(document.getElementById('mock-count').value);
+  const area = document.getElementById('mock-area');
+  document.getElementById('mock-setup').classList.add('hidden');
+  area.classList.remove('hidden');
+
+  area.innerHTML = `<div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Building your mock exam…</div>
+    <div class="loading-sub">Generating ${count} questions across all chapters</div>
+  </div>`;
+
+  mockQuestions = [];
+  mockAnswers = {};
+  mockCurrentIdx = 0;
+  isMockRunning = true;
+
+  // Generate questions sequentially
+  const topics = ['Fundamentals of Testing','Testing Throughout the SDLC','Static Testing','Test Analysis and Design','Managing the Test Activities','Test Tools'];
+  const diffs = ['easy','medium','hard'];
+
+  for(let i=0; i<count; i++){
+    const t = topics[i % topics.length];
+    const d = diffs[i % 3];
+    try {
+      const raw = await callClaude(
+        `Generate one ISTQB CTFL v4.0 exam question for topic: "${t}". Difficulty: ${d === 'hard' ? 'K3 with detailed scenario' : d}.`,
+        SYSTEM_PROMPT
+      );
+      mockQuestions.push(JSON.parse(raw.trim()));
+      area.innerHTML = `<div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Building mock exam… (${i+1}/${count})</div>
+        <div class="loading-sub">✅ ${i+1} questions ready</div>
+      </div>`;
+    } catch(e) {
+      // skip on error, try next
+    }
+  }
+
+  mockTimeLeft = (count === 10 ? 15 : count === 20 ? 30 : 60) * 60;
+  startMockTimer();
+  renderMockQuestion();
+}
+
+function startMockTimer() {
+  if(mockTimer) clearInterval(mockTimer);
+  mockTimer = setInterval(() => {
+    mockTimeLeft--;
+    const el = document.getElementById('mock-timer');
+    if(el) {
+      const m = String(Math.floor(mockTimeLeft/60)).padStart(2,'0');
+      const s = String(mockTimeLeft%60).padStart(2,'0');
+      el.textContent = `${m}:${s}`;
+      if(mockTimeLeft < 300) el.classList.add('urgent');
+    }
+    if(mockTimeLeft <= 0) { clearInterval(mockTimer); submitMockExam(); }
+  }, 1000);
+}
+
+function renderMockQuestion() {
+  const area = document.getElementById('mock-area');
+  const q = mockQuestions[mockCurrentIdx];
+  const count = mockQuestions.length;
+  const pct = Math.round((mockCurrentIdx / count) * 100);
+
+  const m = String(Math.floor(mockTimeLeft/60)).padStart(2,'0');
+  const s = String(mockTimeLeft%60).padStart(2,'0');
+
+  const scenarioHtml = q.scenario ? `<div class="q-scenario"><strong>📋 Scenario</strong>${q.scenario}</div>` : '';
+  const diffClass = q.difficulty === 'Hard' ? 'hard' : q.difficulty === 'Medium' ? 'medium' : '';
+  const saved = mockAnswers[mockCurrentIdx];
+
+  const navDots = mockQuestions.map((_,i)=>`
+    <div class="q-dot ${mockAnswers[i]?'answered':''} ${i===mockCurrentIdx?'current':''}" 
+         onclick="jumpMockQ(${i})">${i+1}</div>
+  `).join('');
+
+  area.innerHTML = `
+    <div class="timer-bar">
+      <div>⏱️</div>
+      <div class="timer-clock ${mockTimeLeft<300?'urgent':''}" id="mock-timer">${m}:${s}</div>
+      <div class="timer-label">Time Remaining</div>
+      <div style="margin-left:auto;color:var(--muted);font-size:13px">Q${mockCurrentIdx+1} of ${count}</div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width:${pct}%"></div>
+    </div>
+
+    <div class="q-nav">${navDots}</div>
+
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="badge badge-topic">${q.topic}</span>
+        <span class="badge badge-diff ${diffClass}">${q.kLevel}</span>
+        <span class="q-num">Q${mockCurrentIdx+1}</span>
+      </div>
+      ${scenarioHtml}
+      <div class="q-text">${q.question}</div>
+      <div class="options">
+        ${['A','B','C','D'].map(k=>`
+          <div class="option ${saved===k?'selected':''}" onclick="selectMockAnswer(${mockCurrentIdx},'${k}')">
+            <span class="opt-key">${k}</span>
+            <span>${q.options[k]}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="navMock(-1)" ${mockCurrentIdx===0?'disabled':''}>← Prev</button>
+      <button class="btn btn-secondary" onclick="submitMockExam()" style="color:var(--red);border-color:rgba(239,68,68,0.4)">Submit Exam</button>
+      ${mockCurrentIdx < mockQuestions.length-1 
+        ? `<button class="btn btn-primary" onclick="navMock(1)">Next →</button>`
+        : `<button class="btn btn-primary" onclick="submitMockExam()">Finish & Submit ✓</button>`}
+    </div>
+  `;
+}
+
+function selectMockAnswer(idx, key) {
+  mockAnswers[idx] = key;
+  renderMockQuestion();
+}
+
+function navMock(dir) {
+  mockCurrentIdx = Math.max(0, Math.min(mockQuestions.length-1, mockCurrentIdx + dir));
+  renderMockQuestion();
+}
+
+function jumpMockQ(idx) {
+  mockCurrentIdx = idx;
+  renderMockQuestion();
+}
+
+function submitMockExam() {
+  if(mockTimer) clearInterval(mockTimer);
+  isMockRunning = false;
+
+  let correct = 0;
+  mockQuestions.forEach((q,i) => { if(mockAnswers[i] === q.correct) correct++; });
+  const total = mockQuestions.length;
+  const pct = Math.round((correct/total)*100);
+  const passed = pct >= 65;
+
+  // Add wrong answers to review
+  mockQuestions.forEach((q,i) => {
+    if(mockAnswers[i] !== q.correct) wrongQuestions.push(q);
+  });
+  sessionScore += correct;
+  sessionTotal += total;
+  updateStats();
+
+  const area = document.getElementById('mock-area');
+  const circumference = 2 * Math.PI * 54;
+  const filled = (pct/100) * circumference;
+
+  // Breakdown per topic
+  const topicMap = {};
+  mockQuestions.forEach((q,i) => {
+    if(!topicMap[q.topic]) topicMap[q.topic] = {right:0,total:0};
+    topicMap[q.topic].total++;
+    if(mockAnswers[i]===q.correct) topicMap[q.topic].right++;
+  });
+
+  const topicRows = Object.entries(topicMap).map(([t,s])=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <span style="flex:1;color:var(--muted)">${t}</span>
+      <span style="color:${s.right/s.total>=0.65?'var(--green)':'var(--red)'}">
+        ${s.right}/${s.total}
+      </span>
+    </div>
+  `).join('');
+
+  area.innerHTML = `
+    <div class="score-card">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;font-family:'DM Mono',monospace">
+        MOCK EXAM RESULTS
+      </div>
+      <div class="score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="54" fill="none" stroke="var(--border)" stroke-width="10"/>
+          <circle cx="70" cy="70" r="54" fill="none" 
+            stroke="${passed?'var(--green)':'var(--red)'}" 
+            stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="${filled} ${circumference}"
+            style="transition:stroke-dasharray 1s ease"/>
+        </svg>
+        <div class="score-text">
+          <div class="score-pct" style="color:${passed?'var(--green)':'var(--red)'}">${pct}%</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+
+      <div class="score-verdict" style="color:${passed?'var(--green)':'var(--red)'}">
+        ${passed ? '🎉 PASSED' : '❌ NOT PASSED'}
+      </div>
+      <div class="score-meta">${passed ? 'Congratulations! You met the 65% pass mark.' : 'You need 65% to pass. Keep practising!'}</div>
+
+      <div class="score-breakdown">
+        <div class="sb-item green"><div class="sb-num">${correct}</div><div class="sb-lbl">Correct</div></div>
+        <div class="sb-item red"><div class="sb-num">${total-correct}</div><div class="sb-lbl">Wrong</div></div>
+        <div class="sb-item"><div class="sb-num">${total}</div><div class="sb-lbl">Total</div></div>
+      </div>
+
+      <div style="text-align:left;margin-bottom:24px">
+        <div style="font-size:12px;font-family:'Syne',sans-serif;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px">Performance by Topic</div>
+        ${topicRows}
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="retryMock()">🔄 Retake Exam</button>
+        <button class="btn btn-secondary" onclick="showTab('review')">📋 Review Mistakes</button>
+      </div>
+    </div>
+  `;
+}
+
+function retryMock() {
+  document.getElementById('mock-setup').classList.remove('hidden');
+  document.getElementById('mock-area').classList.add('hidden');
+  document.getElementById('mock-area').innerHTML = '';
+}
+
+// ============================================================
+// REVIEW
+// ============================================================
+function renderReview() {
+  const area = document.getElementById('review-area');
+  if(!wrongQuestions.length) {
+    area.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted)">
+      <div style="font-size:48px;margin-bottom:16px">📭</div>
+      <div style="font-size:16px">No mistakes yet — keep practising!</div>
+    </div>`;
+    return;
+  }
+
+  area.innerHTML = `
+    <div style="margin-bottom:16px;color:var(--muted);font-size:13px">${wrongQuestions.length} question(s) to review</div>
+    <div class="review-list">
+      ${wrongQuestions.map((q,i)=>`
+        <div class="review-item">
+          <span class="ri-num">${i+1}</span>
+          <div class="ri-q">
+            <div style="margin-bottom:4px;font-weight:500">${q.question.substring(0,100)}…</div>
+            <div style="font-size:12px;color:var(--muted)">${q.topic} · ${q.kLevel}</div>
+          </div>
+          <span class="ri-status" onclick="reviewQ(${i})" style="cursor:pointer" title="Review this question">👁️</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function reviewQ(idx) {
+  const area = document.getElementById('review-area');
+  const q = wrongQuestions[idx];
+  area.innerHTML = `
+    <button class="btn btn-ghost" onclick="renderReview()" style="margin-bottom:16px">← Back to list</button>
+  `;
+  const wrapper = document.createElement('div');
+  area.appendChild(wrapper);
+  renderPracticeQuestion(q, wrapper, false);
+  // auto-highlight correct answer
+  setTimeout(()=>{
+    const corrEl = wrapper.querySelector(`[id$="-${q.correct}"]`);
+    if(corrEl) corrEl.classList.add('correct');
+    const fb = wrapper.querySelector(`[id^="feedback-"]`);
+    if(fb) fb.innerHTML = `<div class="explanation">
+      <h4>💡 Explanation</h4>
+      <p>${q.explanation}</p>
+      <div class="syllabus-ref">📚 ${q.syllabusRef}</div>
+    </div>`;
+    wrapper.querySelectorAll('.option').forEach(o => { o.classList.add('disabled'); o.onclick=null; });
+  }, 100);
+}
+</script>
+</body>
+</html>
